@@ -13,10 +13,12 @@
 
 ### 2. Configure Environment Variables
 1. Open `.env.local` in the project root
-2. Replace the placeholders with your actual values:
-   - `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anon key
-   - `OPENAI_API_KEY` - Your OpenAI API key
+2. Fill in your actual values (the file currently has empty values):
+   - `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL (e.g., https://abcdefg.supabase.co)
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anon key (long JWT token starting with eyJ...)
+   - `OPENAI_API_KEY` - Your OpenAI API key (starting with sk-proj-...)
+
+**Important**: The app will not build or run without these values configured!
 
 ### 3. Create Database Tables
 1. In your Supabase project, go to the SQL Editor
