@@ -112,7 +112,7 @@ export default function LogWorkoutPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
       </div>
     )
   }
@@ -124,7 +124,7 @@ export default function LogWorkoutPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Workout Not Found</h2>
           <button
             onClick={() => router.push('/dashboard')}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 shadow-lg"
           >
             Back to Dashboard
           </button>
@@ -138,24 +138,24 @@ export default function LogWorkoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-green-50 py-8 px-4">
       <div className="max-w-2xl mx-auto">
         <button
           onClick={() => router.push('/dashboard')}
-          className="mb-4 text-blue-600 hover:text-blue-700 flex items-center gap-2"
+          className="mb-4 text-orange-600 hover:text-orange-700 flex items-center gap-2 font-semibold"
         >
           ← Back to Dashboard
         </button>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 border border-orange-100">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent mb-2">
             {workout.completed ? 'Workout Details' : 'Log Workout'}
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 mb-8 text-lg">
             {format(parseISO(workout.date), 'EEEE, MMMM d, yyyy')}
           </p>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
+          <div className="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 rounded-xl p-6 mb-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
               {getWorkoutTypeLabel(workout.workout_type)}
             </h2>
@@ -289,7 +289,7 @@ export default function LogWorkoutPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 px-6 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition disabled:opacity-50"
+                  className="flex-1 px-6 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-bold text-lg hover:from-green-600 hover:to-green-700 transition-all shadow-lg disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : 'Complete Workout'}
                 </button>
@@ -297,7 +297,7 @@ export default function LogWorkoutPage() {
                   type="button"
                   onClick={handleSkip}
                   disabled={saving}
-                  className="px-6 py-4 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition disabled:opacity-50"
+                  className="px-6 py-4 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition disabled:opacity-50"
                 >
                   Skip
                 </button>

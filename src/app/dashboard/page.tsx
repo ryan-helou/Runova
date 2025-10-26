@@ -83,11 +83,11 @@ export default function DashboardPage() {
 
   const getWorkoutTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      easy_run: 'bg-green-100 text-green-800 border-green-300',
-      long_run: 'bg-blue-100 text-blue-800 border-blue-300',
-      tempo: 'bg-orange-100 text-orange-800 border-orange-300',
-      intervals: 'bg-red-100 text-red-800 border-red-300',
-      recovery: 'bg-purple-100 text-purple-800 border-purple-300',
+      easy_run: 'bg-green-100 text-green-800 border-green-400',
+      long_run: 'bg-emerald-100 text-emerald-800 border-emerald-400',
+      tempo: 'bg-orange-100 text-orange-800 border-orange-400',
+      intervals: 'bg-red-100 text-red-800 border-red-400',
+      recovery: 'bg-lime-100 text-lime-800 border-lime-400',
       rest: 'bg-gray-100 text-gray-800 border-gray-300',
     }
     return colors[type] || 'bg-gray-100 text-gray-800 border-gray-300'
@@ -100,19 +100,19 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
       </div>
     )
   }
 
   if (!trainingPlan) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-green-50">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">No Active Training Plan</h2>
           <button
             onClick={() => router.push('/onboarding')}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg"
           >
             Create a Plan
           </button>
@@ -157,22 +157,22 @@ export default function DashboardPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Progress Overview */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Training Progress</h2>
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-orange-100">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Training Progress</h2>
           <div className="flex items-center gap-6">
             <div className="flex-1">
-              <div className="flex justify-between text-sm text-gray-600 mb-2">
+              <div className="flex justify-between text-sm font-semibold text-gray-600 mb-2">
                 <span>Progress</span>
                 <span>{completedCount} / {totalCount} workouts</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
+              <div className="w-full bg-gray-200 rounded-full h-4">
                 <div
-                  className="bg-blue-600 h-3 rounded-full transition-all duration-300"
+                  className="bg-gradient-to-r from-green-500 to-green-600 h-4 rounded-full transition-all duration-300 shadow-md"
                   style={{ width: `${progressPercentage}%` }}
                 ></div>
               </div>
             </div>
-            <div className="text-3xl font-bold text-blue-600">
+            <div className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent">
               {Math.round(progressPercentage)}%
             </div>
           </div>
@@ -181,23 +181,23 @@ export default function DashboardPage() {
         {/* Calendar View */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">This Week</h2>
+            <h2 className="text-xl font-bold text-gray-900">This Week</h2>
             <div className="flex gap-2">
               <button
                 onClick={() => setCurrentWeekStart(addDays(currentWeekStart, -7))}
-                className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition font-semibold"
               >
                 Previous
               </button>
               <button
                 onClick={() => setCurrentWeekStart(startOfWeek(new Date()))}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition font-semibold shadow-md"
               >
                 Today
               </button>
               <button
                 onClick={() => setCurrentWeekStart(addDays(currentWeekStart, 7))}
-                className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition font-semibold"
               >
                 Next
               </button>
@@ -213,7 +213,7 @@ export default function DashboardPage() {
                 <div
                   key={day.toISOString()}
                   className={`border rounded-lg p-3 min-h-[120px] ${
-                    isToday ? 'border-blue-500 border-2 bg-blue-50' : 'border-gray-200'
+                    isToday ? 'border-orange-500 border-2 bg-orange-50' : 'border-gray-200'
                   }`}
                 >
                   <div className="font-semibold text-sm text-gray-700 mb-2">
@@ -245,9 +245,9 @@ export default function DashboardPage() {
 
         {/* AI Recommendations */}
         {trainingPlan.ai_recommendations && (
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">Coach's Recommendations</h2>
-            <p className="text-gray-700 whitespace-pre-line">{trainingPlan.ai_recommendations}</p>
+          <div className="bg-gradient-to-br from-orange-50 to-green-50 border-2 border-orange-200 rounded-xl p-6 shadow-md">
+            <h2 className="text-xl font-bold text-gray-900 mb-3">Coach's Recommendations</h2>
+            <p className="text-gray-700 whitespace-pre-line leading-relaxed">{trainingPlan.ai_recommendations}</p>
           </div>
         )}
       </main>
@@ -288,13 +288,13 @@ export default function DashboardPage() {
                 onClick={() => {
                   router.push(`/log-workout/${selectedWorkout.id}`)
                 }}
-                className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg"
               >
                 {selectedWorkout.completed ? 'View Details' : 'Log Workout'}
               </button>
               <button
                 onClick={() => setSelectedWorkout(null)}
-                className="px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                className="px-4 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition"
               >
                 Close
               </button>
