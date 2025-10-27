@@ -65,23 +65,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
 
-    if (!error) {
+    if (!error && data.user) {
       // Check if user has completed onboarding
       const { data: profile } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user?.id)
+        .eq('id', data.user.id)
         .single()
 
       if (!profile) {
         router.push('/onboarding')
       } else {
-        router.push('/dashboard')
+        router.push('/plans')
       }
     }
 

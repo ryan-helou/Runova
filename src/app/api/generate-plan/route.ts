@@ -20,15 +20,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get user profile
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single()
+    // Get plan data from request body
+    const body = await request.json()
+    const {
+      planName,
+      goal,
+      trainingFrequency,
+      raceDate,
+      goalTime,
+      personalBestTime,
+      notes,
+      specialEvents,
+      injuryHistory,
+    } = body
 
-    if (profileError || !profile) {
-      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+    // Validate required fields
+    if (!planName || !goal || !trainingFrequency) {
+      return NextResponse.json(
+        { error: 'Missing required fields: planName, goal, and trainingFrequency are required' },
+        { status: 400 }
+      )
     }
 
     // Determine plan duration based on goal
@@ -37,14 +48,14 @@ export async function POST(request: NextRequest) {
       '10k': 10,
       'half_marathon': 12,
       'marathon': 16,
-      'general_fitness': 12,
+      'custom': 12,
     }
 
-    const weeks = planDurations[profile.running_goal] || 12
+    const weeks = planDurations[goal] || 12
 
     // Calculate dates
-    const startDate = profile.target_race_date
-      ? addWeeks(new Date(profile.target_race_date), -weeks)
+    const startDate = raceDate
+      ? addWeeks(new Date(raceDate), -weeks)
       : new Date()
     const endDate = addWeeks(startDate, weeks)
 
@@ -52,19 +63,22 @@ export async function POST(request: NextRequest) {
     const prompt = `You are an expert running coach. Create a detailed ${weeks}-week training plan with the following specifications:
 
 Runner Profile:
-- Experience Level: ${profile.experience_level}
-- Goal: ${profile.running_goal.replace('_', ' ')}
-- Current Weekly Mileage: ${profile.current_weekly_mileage} miles
-- Training Days Per Week: ${profile.training_frequency}
-- Target Race Date: ${profile.target_race_date || 'Not specified'}
-- Injury History: ${profile.injury_history || 'None'}
+- Goal: ${goal.replace('_', ' ')}
+- Training Days Per Week: ${trainingFrequency}
+- Target Race Date: ${raceDate || 'Not specified'}
+- Goal Time: ${goalTime || 'Not specified'}
+- Personal Best Time: ${personalBestTime || 'Not specified'}
+- Notes: ${notes || 'None'}
+- Special Events: ${specialEvents || 'None'}
+- Injury History: ${injuryHistory || 'None'}
 
 Requirements:
-1. Create a progressive training plan that builds safely from their current mileage
+1. Create a progressive training plan that builds safely
 2. Include variety: easy runs, long runs, tempo runs, intervals, and recovery/rest days
 3. Follow the 10% rule for weekly mileage increases
 4. Include a taper period if preparing for a race
 5. Provide specific guidance for each workout type
+6. Take into account any special events, injury history, and training frequency
 
 Return a JSON response with this exact structure:
 {
@@ -92,7 +106,7 @@ Important: Return ONLY valid JSON, no markdown formatting or extra text.`
 
     // Call OpenAI
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4o',
       messages: [
         {
           role: 'system',
@@ -114,10 +128,17 @@ Important: Return ONLY valid JSON, no markdown formatting or extra text.`
       .from('training_plans')
       .insert({
         user_id: user.id,
-        plan_name: planData.planName,
+        plan_name: planName,
         start_date: format(startDate, 'yyyy-MM-dd'),
         end_date: format(endDate, 'yyyy-MM-dd'),
-        goal: profile.running_goal,
+        goal: goal,
+        training_frequency: trainingFrequency,
+        race_date: raceDate || null,
+        goal_time: goalTime || null,
+        personal_best_time: personalBestTime || null,
+        notes: notes || null,
+        special_events: specialEvents || null,
+        injury_history: injuryHistory || null,
         weekly_schedule: planData.weeklySchedule,
         ai_recommendations: planData.recommendations,
         is_active: true,

@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { createClient } from '@/lib/supabase/client'
 import { format, startOfWeek, addDays, isSameDay, parseISO } from 'date-fns'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface Workout {
   id: string
@@ -29,9 +29,10 @@ interface TrainingPlan {
   ai_recommendations: string
 }
 
-export default function DashboardPage() {
+function DashboardContent() {
   const { user, signOut } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
 
   const [trainingPlan, setTrainingPlan] = useState<TrainingPlan | null>(null)
@@ -42,19 +43,34 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadDashboardData()
-  }, [])
+  }, [searchParams])
 
   const loadDashboardData = async () => {
     try {
-      // Get active training plan
-      const { data: plan } = await supabase
-        .from('training_plans')
-        .select('*')
-        .eq('user_id', user?.id)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
+      const planId = searchParams.get('planId')
+
+      let plan = null
+      if (planId) {
+        // Get specific plan by ID
+        const { data } = await supabase
+          .from('training_plans')
+          .select('*')
+          .eq('id', planId)
+          .eq('user_id', user?.id)
+          .single()
+        plan = data
+      } else {
+        // Get active training plan
+        const { data } = await supabase
+          .from('training_plans')
+          .select('*')
+          .eq('user_id', user?.id)
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single()
+        plan = data
+      }
 
       if (plan) {
         setTrainingPlan(plan)
@@ -109,12 +125,12 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-green-50">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">No Active Training Plan</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">No Training Plan Found</h2>
           <button
-            onClick={() => router.push('/onboarding')}
+            onClick={() => router.push('/plans')}
             className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg"
           >
-            Create a Plan
+            Back to Plans
           </button>
         </div>
       </div>
@@ -134,16 +150,15 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Runova Dashboard</h1>
-              <p className="text-sm text-gray-600">{trainingPlan.plan_name}</p>
+              <button
+                onClick={() => router.push('/plans')}
+                className="text-orange-600 hover:text-orange-700 font-semibold mb-2 flex items-center gap-1"
+              >
+                ← Back to Plans
+              </button>
+              <h1 className="text-2xl font-bold text-gray-900">{trainingPlan.plan_name}</h1>
             </div>
             <div className="flex items-center gap-4">
-              <button
-                onClick={() => router.push('/settings')}
-                className="px-4 py-2 text-gray-700 hover:text-gray-900"
-              >
-                Settings
-              </button>
               <button
                 onClick={signOut}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
@@ -303,5 +318,17 @@ export default function DashboardPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   )
 }

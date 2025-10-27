@@ -6,8 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type ExperienceLevel = 'beginner' | 'intermediate' | 'advanced'
-export type RunningGoal = '5k' | '10k' | 'half_marathon' | 'marathon' | 'general_fitness'
+export type RunningGoal = '5k' | '10k' | 'half_marathon' | 'marathon' | 'custom'
 export type WorkoutType = 'easy_run' | 'long_run' | 'tempo' | 'intervals' | 'recovery' | 'rest'
 export type EffortLevel = 'easy' | 'moderate' | 'hard' | 'very_hard'
 
@@ -21,12 +20,6 @@ export interface Database {
           updated_at: string
           email: string
           full_name: string | null
-          experience_level: ExperienceLevel
-          running_goal: RunningGoal
-          current_weekly_mileage: number
-          training_frequency: number
-          target_race_date: string | null
-          injury_history: string | null
         }
         Insert: {
           id: string
@@ -34,12 +27,6 @@ export interface Database {
           updated_at?: string
           email: string
           full_name?: string | null
-          experience_level: ExperienceLevel
-          running_goal: RunningGoal
-          current_weekly_mileage: number
-          training_frequency: number
-          target_race_date?: string | null
-          injury_history?: string | null
         }
         Update: {
           id?: string
@@ -47,12 +34,6 @@ export interface Database {
           updated_at?: string
           email?: string
           full_name?: string | null
-          experience_level?: ExperienceLevel
-          running_goal?: RunningGoal
-          current_weekly_mileage?: number
-          training_frequency?: number
-          target_race_date?: string | null
-          injury_history?: string | null
         }
       }
       training_plans: {
@@ -62,9 +43,16 @@ export interface Database {
           updated_at: string
           user_id: string
           plan_name: string
+          goal: RunningGoal
+          training_frequency: number
+          race_date: string | null
+          goal_time: string | null
+          personal_best_time: string | null
+          notes: string | null
+          special_events: string | null
+          injury_history: string | null
           start_date: string
           end_date: string
-          goal: RunningGoal
           weekly_schedule: Json
           ai_recommendations: string | null
           is_active: boolean
@@ -75,9 +63,16 @@ export interface Database {
           updated_at?: string
           user_id: string
           plan_name: string
+          goal: RunningGoal
+          training_frequency: number
+          race_date?: string | null
+          goal_time?: string | null
+          personal_best_time?: string | null
+          notes?: string | null
+          special_events?: string | null
+          injury_history?: string | null
           start_date: string
           end_date: string
-          goal: RunningGoal
           weekly_schedule: Json
           ai_recommendations?: string | null
           is_active?: boolean
@@ -88,9 +83,16 @@ export interface Database {
           updated_at?: string
           user_id?: string
           plan_name?: string
+          goal?: RunningGoal
+          training_frequency?: number
+          race_date?: string | null
+          goal_time?: string | null
+          personal_best_time?: string | null
+          notes?: string | null
+          special_events?: string | null
+          injury_history?: string | null
           start_date?: string
           end_date?: string
-          goal?: RunningGoal
           weekly_schedule?: Json
           ai_recommendations?: string | null
           is_active?: boolean

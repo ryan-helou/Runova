@@ -2,36 +2,36 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create custom types
-CREATE TYPE experience_level AS ENUM ('beginner', 'intermediate', 'advanced');
-CREATE TYPE running_goal AS ENUM ('5k', '10k', 'half_marathon', 'marathon', 'general_fitness');
+CREATE TYPE running_goal AS ENUM ('5k', '10k', 'half_marathon', 'marathon', 'custom');
 CREATE TYPE workout_type AS ENUM ('easy_run', 'long_run', 'tempo', 'intervals', 'recovery', 'rest');
 CREATE TYPE effort_level AS ENUM ('easy', 'moderate', 'hard', 'very_hard');
 
--- Profiles table
+-- Profiles table (simplified - just basic user info)
 CREATE TABLE profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   email TEXT NOT NULL,
-  full_name TEXT,
-  experience_level experience_level NOT NULL,
-  running_goal running_goal NOT NULL,
-  current_weekly_mileage DECIMAL NOT NULL,
-  training_frequency INTEGER NOT NULL,
-  target_race_date DATE,
-  injury_history TEXT
+  full_name TEXT
 );
 
--- Training plans table
+-- Training plans table (all plan-specific data stored here)
 CREATE TABLE training_plans (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   plan_name TEXT NOT NULL,
+  goal running_goal NOT NULL,
+  training_frequency INTEGER NOT NULL CHECK (training_frequency >= 1 AND training_frequency <= 7),
+  race_date DATE,
+  goal_time TEXT,
+  personal_best_time TEXT,
+  notes TEXT,
+  special_events TEXT,
+  injury_history TEXT,
   start_date DATE NOT NULL,
   end_date DATE NOT NULL,
-  goal running_goal NOT NULL,
   weekly_schedule JSONB NOT NULL,
   ai_recommendations TEXT,
   is_active BOOLEAN DEFAULT true

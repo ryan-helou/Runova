@@ -230,7 +230,7 @@ export default function LogWorkoutPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, actualDistance: e.target.value })
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-gray-900 font-medium placeholder:text-gray-400"
                     placeholder={workout.planned_distance?.toString() || '0'}
                   />
                 </div>
@@ -245,7 +245,7 @@ export default function LogWorkoutPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, actualDuration: e.target.value })
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-gray-900 font-medium placeholder:text-gray-400"
                     placeholder={workout.planned_duration?.toString() || '0'}
                   />
                 </div>
@@ -260,7 +260,7 @@ export default function LogWorkoutPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, effortLevel: e.target.value })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-gray-900 font-medium"
                 >
                   <option value="">Select effort level</option>
                   <option value="easy">Easy - Could hold a conversation</option>
@@ -280,7 +280,7 @@ export default function LogWorkoutPage() {
                     setFormData({ ...formData, notes: e.target.value })
                   }
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-gray-900 font-medium"
                   placeholder="How did the workout go? Any observations?"
                 />
               </div>
