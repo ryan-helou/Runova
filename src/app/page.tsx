@@ -1,68 +1,73 @@
 import Link from "next/link";
+import { Target, TrendingUp, Calendar } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-amber-50 to-green-50">
-      <main className="max-w-4xl mx-auto px-6 py-20 text-center">
-        <div className="mb-8">
-          <h1 className="text-7xl font-bold bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent mb-6">
-            Runova
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50">
+      <main className="max-w-6xl mx-auto px-6 py-20">
+        {/* Hero Section */}
+        <div className="text-center mb-24">
+          <h1 className="text-7xl md:text-8xl font-black mb-6 bg-gradient-to-r from-orange-600 via-orange-500 to-red-600 bg-clip-text text-transparent">
+            RUNOVA
           </h1>
-          <p className="text-2xl font-semibold text-gray-800 mb-4">
+          <p className="text-3xl font-black text-gray-900 mb-4 tracking-tight">
             Your AI-Powered Running Coach
           </p>
-          <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-700 mb-12 max-w-2xl mx-auto font-medium">
             Get personalized training plans tailored to your goals, track your progress,
             and achieve your running potential with AI-powered guidance.
           </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link
+              href="/signup"
+              className="group px-12 py-5 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl font-black text-xl hover:from-orange-700 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 transform"
+            >
+              Get Started
+            </Link>
+            <Link
+              href="/login"
+              className="px-12 py-5 bg-white text-gray-900 rounded-xl font-black text-xl border-2 border-gray-300 hover:border-orange-500 hover:shadow-xl transition-all duration-300 hover:scale-105 transform"
+            >
+              Sign In
+            </Link>
+          </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20">
-          <Link
-            href="/signup"
-            className="px-10 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold text-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-          >
-            Get Started
-          </Link>
-          <Link
-            href="/login"
-            className="px-10 py-4 bg-white text-green-700 rounded-xl font-bold text-lg border-2 border-green-600 hover:bg-green-50 transition-all duration-300 shadow-md hover:shadow-lg"
-          >
-            Sign In
-          </Link>
-        </div>
-
+        {/* Features */}
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-100 hover:border-orange-300 transform hover:-translate-y-1">
-            <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center text-3xl mb-4 mx-auto">
-              🎯
+          <div className="group bg-white p-8 rounded-2xl border-2 border-gray-100 hover:border-orange-500 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 transform cursor-pointer">
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <Target className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">
+            <h3 className="text-2xl font-black text-gray-900 mb-4">
               Personalized Plans
             </h3>
-            <p className="text-gray-600 leading-relaxed">
-              AI-generated training plans based on your experience, goals, and schedule
+            <p className="text-gray-700 font-medium">
+              AI-generated training plans based on your goals and schedule
             </p>
           </div>
-          <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-green-100 hover:border-green-300 transform hover:-translate-y-1">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-3xl mb-4 mx-auto">
-              📊
+
+          <div className="group bg-white p-8 rounded-2xl border-2 border-gray-100 hover:border-green-500 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 transform cursor-pointer">
+            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <TrendingUp className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">
+            <h3 className="text-2xl font-black text-gray-900 mb-4">
               Track Progress
             </h3>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-700 font-medium">
               Log your workouts and monitor your improvement over time
             </p>
           </div>
-          <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-300 transform hover:-translate-y-1">
-            <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center text-3xl mb-4 mx-auto">
-              🔄
+
+          <div className="group bg-white p-8 rounded-2xl border-2 border-gray-100 hover:border-orange-500 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 transform cursor-pointer">
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-yellow-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <Calendar className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">
+            <h3 className="text-2xl font-black text-gray-900 mb-4">
               Adaptive Training
             </h3>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-700 font-medium">
               Plans adjust based on your progress and feedback
             </p>
           </div>

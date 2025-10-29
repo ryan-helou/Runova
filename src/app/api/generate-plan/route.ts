@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
       notes,
       specialEvents,
       injuryHistory,
+      distanceUnit = 'km',
     } = body
 
     // Validate required fields
@@ -59,7 +60,8 @@ export async function POST(request: NextRequest) {
       : new Date()
     const endDate = addWeeks(startDate, weeks)
 
-    // Create AI prompt
+    // Create AI prompt with unit preference
+    const unitLabel = distanceUnit === 'km' ? 'kilometers' : 'miles'
     const prompt = `You are an expert running coach. Create a detailed ${weeks}-week training plan with the following specifications:
 
 Runner Profile:
@@ -71,6 +73,7 @@ Runner Profile:
 - Notes: ${notes || 'None'}
 - Special Events: ${specialEvents || 'None'}
 - Injury History: ${injuryHistory || 'None'}
+- Distance Unit Preference: ${unitLabel}
 
 Requirements:
 1. Create a progressive training plan that builds safely
@@ -79,6 +82,7 @@ Requirements:
 4. Include a taper period if preparing for a race
 5. Provide specific guidance for each workout type
 6. Take into account any special events, injury history, and training frequency
+7. ALL DISTANCES MUST BE IN ${unitLabel.toUpperCase()}. Round all distances to nearest 0.5 (e.g., 5.0, 5.5, 6.0, not 5.23).
 
 Return a JSON response with this exact structure:
 {
@@ -86,12 +90,12 @@ Return a JSON response with this exact structure:
   "weeklySchedule": [
     {
       "week": 1,
-      "totalMileage": number,
+      "totalMileage": number (in ${unitLabel}, rounded to nearest 0.5),
       "workouts": [
         {
           "day": 1,
           "type": "easy_run" | "long_run" | "tempo" | "intervals" | "recovery" | "rest",
-          "distance": number (in miles, can be decimal),
+          "distance": number (in ${unitLabel}, rounded to nearest 0.5, can be decimal like 5.5),
           "duration": number (estimated minutes),
           "description": "string - detailed workout instructions",
           "intensity": "easy" | "moderate" | "hard"
@@ -102,7 +106,7 @@ Return a JSON response with this exact structure:
   "recommendations": "string - overall training advice and tips specific to this runner"
 }
 
-Important: Return ONLY valid JSON, no markdown formatting or extra text.`
+Important: Return ONLY valid JSON, no markdown formatting or extra text. Remember: ALL distances in ${unitLabel}, rounded to nearest 0.5.`
 
     // Call OpenAI
     const completion = await openai.chat.completions.create({
@@ -141,6 +145,7 @@ Important: Return ONLY valid JSON, no markdown formatting or extra text.`
         injury_history: injuryHistory || null,
         weekly_schedule: planData.weeklySchedule,
         ai_recommendations: planData.recommendations,
+        distance_unit: distanceUnit,
         is_active: true,
       })
       .select()

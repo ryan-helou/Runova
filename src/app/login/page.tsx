@@ -25,20 +25,20 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-amber-50 to-green-50 px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 border border-orange-100">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent mb-2">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-green-50 px-4">
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-10 border-2 border-gray-100">
+        <div className="mb-10">
+          <h1 className="text-5xl font-black bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-3 uppercase">
             Welcome Back
           </h1>
-          <p className="text-gray-600 text-lg">Sign in to continue your training</p>
+          <p className="text-xl text-gray-700 font-medium">Sign in to continue your training</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-semibold text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-1.5"
             >
               Email
             </label>
@@ -48,7 +48,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all text-gray-900 font-medium placeholder:text-gray-400"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-600 focus:border-orange-600 outline-none transition-colors text-gray-900 placeholder:text-gray-400"
               placeholder="you@example.com"
             />
           </div>
@@ -56,7 +56,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-semibold text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-1.5"
             >
               Password
             </label>
@@ -66,13 +66,13 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all text-gray-900 font-medium placeholder:text-gray-400"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-600 focus:border-orange-600 outline-none transition-colors text-gray-900 placeholder:text-gray-400"
               placeholder="••••••••"
             />
           </div>
 
           {error && (
-            <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
               {error}
             </div>
           )}
@@ -80,15 +80,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 rounded-xl font-bold text-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5"
+            className="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-4 rounded-xl font-black text-lg hover:from-orange-700 hover:to-red-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl hover:shadow-2xl hover:scale-105 transform uppercase"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-600">
+        <div className="mt-8 text-center text-base text-gray-700">
           Don't have an account?{' '}
-          <Link href="/signup" className="text-green-600 hover:text-green-700 font-bold">
+          <Link href="/signup" className="text-orange-600 hover:text-orange-800 font-black">
             Sign up
           </Link>
         </div>

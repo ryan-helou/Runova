@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { createClient } from '@/lib/supabase/client'
 import { format, startOfWeek, addDays, isSameDay, parseISO } from 'date-fns'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { formatDistance, type DistanceUnit } from '@/lib/distance'
 
 interface Workout {
   id: string
@@ -40,6 +41,7 @@ function DashboardContent() {
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date()))
   const [loading, setLoading] = useState(true)
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
+  const [unitPreference, setUnitPreference] = useState<DistanceUnit>('km')
 
   useEffect(() => {
     loadDashboardData()
@@ -74,6 +76,8 @@ function DashboardContent() {
 
       if (plan) {
         setTrainingPlan(plan)
+        // Use the plan's distance unit (plans are immutable in their unit)
+        setUnitPreference(plan.distance_unit || 'km')
 
         // Get workouts
         const { data: workoutData } = await supabase
@@ -123,12 +127,12 @@ function DashboardContent() {
 
   if (!trainingPlan) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-green-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-green-50">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">No Training Plan Found</h2>
+          <h2 className="text-4xl font-black text-gray-900 mb-6 uppercase">No Training Plan Found</h2>
           <button
             onClick={() => router.push('/plans')}
-            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg"
+            className="px-8 py-4 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl font-black hover:from-orange-700 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 transform"
           >
             Back to Plans
           </button>
@@ -144,24 +148,24 @@ function DashboardContent() {
   const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="bg-white border-b-4 border-gradient-to-r from-orange-500 to-red-600 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex justify-between items-center">
             <div>
               <button
                 onClick={() => router.push('/plans')}
-                className="text-orange-600 hover:text-orange-700 font-semibold mb-2 flex items-center gap-1"
+                className="text-orange-600 hover:text-orange-800 font-black mb-2 flex items-center gap-1 transition-all hover:scale-105 transform"
               >
                 ← Back to Plans
               </button>
-              <h1 className="text-2xl font-bold text-gray-900">{trainingPlan.plan_name}</h1>
+              <h1 className="text-3xl font-black text-gray-900">{trainingPlan.plan_name}</h1>
             </div>
             <div className="flex items-center gap-4">
               <button
                 onClick={signOut}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                className="px-5 py-2.5 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 transition-all font-bold hover:scale-105 transform"
               >
                 Sign Out
               </button>
@@ -172,47 +176,47 @@ function DashboardContent() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Progress Overview */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-orange-100">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Training Progress</h2>
-          <div className="flex items-center gap-6">
+        <div className="bg-gradient-to-br from-white to-green-50 rounded-2xl shadow-xl p-8 mb-8 border-2 border-green-200">
+          <h2 className="text-2xl font-black text-gray-900 mb-6">TRAINING PROGRESS</h2>
+          <div className="flex items-center gap-8">
             <div className="flex-1">
-              <div className="flex justify-between text-sm font-semibold text-gray-600 mb-2">
+              <div className="flex justify-between text-base font-black text-gray-700 mb-3">
                 <span>Progress</span>
                 <span>{completedCount} / {totalCount} workouts</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-4">
+              <div className="w-full bg-gray-200 rounded-full h-6 shadow-inner">
                 <div
-                  className="bg-gradient-to-r from-green-500 to-green-600 h-4 rounded-full transition-all duration-300 shadow-md"
+                  className="bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 h-6 rounded-full transition-all duration-500 shadow-lg"
                   style={{ width: `${progressPercentage}%` }}
                 ></div>
               </div>
             </div>
-            <div className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent">
+            <div className="text-5xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
               {Math.round(progressPercentage)}%
             </div>
           </div>
         </div>
 
         {/* Calendar View */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">This Week</h2>
-            <div className="flex gap-2">
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border-2 border-gray-100">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-black text-gray-900">THIS WEEK</h2>
+            <div className="flex gap-3">
               <button
                 onClick={() => setCurrentWeekStart(addDays(currentWeekStart, -7))}
-                className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition font-semibold"
+                className="px-5 py-2.5 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all font-bold hover:scale-105 transform shadow-md"
               >
                 Previous
               </button>
               <button
                 onClick={() => setCurrentWeekStart(startOfWeek(new Date()))}
-                className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition font-semibold shadow-md"
+                className="px-5 py-2.5 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl hover:from-orange-700 hover:to-red-700 transition-all font-black shadow-lg hover:shadow-2xl hover:scale-105 transform"
               >
                 Today
               </button>
               <button
                 onClick={() => setCurrentWeekStart(addDays(currentWeekStart, 7))}
-                className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition font-semibold"
+                className="px-5 py-2.5 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all font-bold hover:scale-105 transform shadow-md"
               >
                 Next
               </button>
@@ -227,29 +231,29 @@ function DashboardContent() {
               return (
                 <div
                   key={day.toISOString()}
-                  className={`border rounded-lg p-3 min-h-[120px] ${
-                    isToday ? 'border-orange-500 border-2 bg-orange-50' : 'border-gray-200'
+                  className={`border-2 rounded-xl p-4 min-h-[140px] transition-all duration-300 ${
+                    isToday ? 'border-orange-500 bg-gradient-to-br from-orange-50 to-orange-100 shadow-lg' : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
                   }`}
                 >
-                  <div className="font-semibold text-sm text-gray-700 mb-2">
+                  <div className="font-black text-sm text-gray-700 mb-1 uppercase">
                     {format(day, 'EEE')}
                   </div>
-                  <div className="text-lg font-bold text-gray-900 mb-2">
+                  <div className="text-2xl font-black text-gray-900 mb-3">
                     {format(day, 'd')}
                   </div>
                   {dayWorkouts.map((workout) => (
                     <button
                       key={workout.id}
                       onClick={() => setSelectedWorkout(workout)}
-                      className={`w-full text-left text-xs p-2 rounded border mb-1 hover:opacity-80 transition ${getWorkoutTypeColor(
+                      className={`w-full text-left text-xs p-2.5 rounded-lg border-2 mb-2 hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg font-bold ${getWorkoutTypeColor(
                         workout.workout_type
-                      )} ${workout.completed ? 'opacity-60' : ''}`}
+                      )} ${workout.completed ? 'opacity-70 ring-2 ring-green-500' : ''}`}
                     >
-                      <div className="font-semibold">{getWorkoutTypeLabel(workout.workout_type)}</div>
+                      <div className="font-black uppercase text-xs">{getWorkoutTypeLabel(workout.workout_type)}</div>
                       {workout.planned_distance && (
-                        <div>{workout.planned_distance} mi</div>
+                        <div className="font-bold">{formatDistance(workout.planned_distance, unitPreference)}</div>
                       )}
-                      {workout.completed && <div className="text-xs">✓ Done</div>}
+                      {workout.completed && <div className="text-xs font-black text-green-700">✓ DONE</div>}
                     </button>
                   ))}
                 </div>
@@ -260,9 +264,9 @@ function DashboardContent() {
 
         {/* AI Recommendations */}
         {trainingPlan.ai_recommendations && (
-          <div className="bg-gradient-to-br from-orange-50 to-green-50 border-2 border-orange-200 rounded-xl p-6 shadow-md">
-            <h2 className="text-xl font-bold text-gray-900 mb-3">Coach's Recommendations</h2>
-            <p className="text-gray-700 whitespace-pre-line leading-relaxed">{trainingPlan.ai_recommendations}</p>
+          <div className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-2xl p-8 shadow-xl">
+            <h2 className="text-2xl font-black text-gray-900 mb-4 uppercase">Coach's Recommendations</h2>
+            <p className="text-gray-800 whitespace-pre-line leading-relaxed font-medium text-lg">{trainingPlan.ai_recommendations}</p>
           </div>
         )}
       </main>
@@ -270,31 +274,31 @@ function DashboardContent() {
       {/* Workout Detail Modal */}
       {selectedWorkout && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
           onClick={() => setSelectedWorkout(null)}
         >
           <div
-            className="bg-white rounded-xl p-6 max-w-md w-full"
+            className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl transform scale-100 animate-fade-in border-2 border-gray-100"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-xl font-bold text-gray-900 mb-4">
+            <h3 className="text-3xl font-black text-gray-900 mb-6 uppercase">
               {getWorkoutTypeLabel(selectedWorkout.workout_type)}
             </h3>
-            <div className="space-y-3 mb-6">
-              <div>
-                <span className="text-gray-600">Date:</span>{' '}
-                <span className="font-semibold">{format(parseISO(selectedWorkout.date), 'MMMM d, yyyy')}</span>
+            <div className="space-y-4 mb-8">
+              <div className="flex items-center gap-3">
+                <span className="text-gray-600 font-bold">Date:</span>
+                <span className="font-black text-gray-900">{format(parseISO(selectedWorkout.date), 'MMMM d, yyyy')}</span>
               </div>
               {selectedWorkout.planned_distance && (
-                <div>
-                  <span className="text-gray-600">Distance:</span>{' '}
-                  <span className="font-semibold">{selectedWorkout.planned_distance} miles</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-gray-600 font-bold">Distance:</span>
+                  <span className="font-black text-gray-900">{formatDistance(selectedWorkout.planned_distance, unitPreference)}</span>
                 </div>
               )}
               {selectedWorkout.planned_duration && (
-                <div>
-                  <span className="text-gray-600">Duration:</span>{' '}
-                  <span className="font-semibold">{selectedWorkout.planned_duration} minutes</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-gray-600 font-bold">Duration:</span>
+                  <span className="font-black text-gray-900">{selectedWorkout.planned_duration} minutes</span>
                 </div>
               )}
             </div>
@@ -303,13 +307,13 @@ function DashboardContent() {
                 onClick={() => {
                   router.push(`/log-workout/${selectedWorkout.id}`)
                 }}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg"
+                className="flex-1 px-6 py-4 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl font-black hover:from-orange-700 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 transform"
               >
                 {selectedWorkout.completed ? 'View Details' : 'Log Workout'}
               </button>
               <button
                 onClick={() => setSelectedWorkout(null)}
-                className="px-4 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition"
+                className="px-6 py-4 bg-gray-200 text-gray-800 rounded-xl font-bold hover:bg-gray-300 transition-all hover:scale-105 transform"
               >
                 Close
               </button>

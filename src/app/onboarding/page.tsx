@@ -11,6 +11,7 @@ export default function OnboardingPage() {
   const supabase = createClient()
 
   const [fullName, setFullName] = useState('')
+  const [unitPreference, setUnitPreference] = useState<'km' | 'mi'>('km')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -26,11 +27,12 @@ export default function OnboardingPage() {
     }
 
     try {
-      // Create simple profile
+      // Create simple profile with unit preference
       const { error: profileError } = await supabase.from('profiles').insert({
         id: user.id,
         email: user.email!,
         full_name: fullName,
+        unit_preference: unitPreference,
       })
 
       if (profileError) throw profileError
@@ -44,20 +46,20 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-green-50 py-12 px-4">
-      <div className="max-w-md mx-auto bg-white rounded-2xl shadow-2xl p-8 border border-orange-100">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent mb-2">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50 py-12 px-4">
+      <div className="max-w-md mx-auto bg-white rounded-2xl shadow-2xl p-12 border-2 border-gray-100">
+        <div className="mb-10">
+          <h1 className="text-5xl font-black bg-gradient-to-r from-orange-600 via-orange-500 to-red-600 bg-clip-text text-transparent mb-4 uppercase text-center">
             Welcome to Runova!
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-xl text-gray-700 font-medium text-center">
             Let's get started. What's your name?
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-8">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-base font-black text-gray-900 mb-3 uppercase">
               Full Name
             </label>
             <input
@@ -65,13 +67,46 @@ export default function OnboardingPage() {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all text-gray-900 font-medium placeholder:text-gray-400"
+              className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-orange-200 focus:border-orange-500 outline-none transition-all text-gray-900 placeholder:text-gray-400 font-medium text-lg hover:border-gray-300"
               placeholder="John Doe"
             />
           </div>
 
+          <div>
+            <label className="block text-base font-black text-gray-900 mb-3 uppercase">
+              Distance Unit Preference
+            </label>
+            <p className="text-sm text-gray-600 mb-4 font-medium">
+              This will be used for all your training plans and workouts
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => setUnitPreference('km')}
+                className={`px-6 py-4 rounded-xl font-black text-lg transition-all duration-300 border-2 ${
+                  unitPreference === 'km'
+                    ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white border-orange-600 shadow-lg scale-105'
+                    : 'bg-white text-gray-700 border-gray-300 hover:border-orange-400 hover:shadow-md'
+                }`}
+              >
+                Kilometers (km)
+              </button>
+              <button
+                type="button"
+                onClick={() => setUnitPreference('mi')}
+                className={`px-6 py-4 rounded-xl font-black text-lg transition-all duration-300 border-2 ${
+                  unitPreference === 'mi'
+                    ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white border-orange-600 shadow-lg scale-105'
+                    : 'bg-white text-gray-700 border-gray-300 hover:border-orange-400 hover:shadow-md'
+                }`}
+              >
+                Miles (mi)
+              </button>
+            </div>
+          </div>
+
           {error && (
-            <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">
+            <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-bold">
               {error}
             </div>
           )}
@@ -79,7 +114,7 @@ export default function OnboardingPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 rounded-xl font-bold text-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5"
+            className="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-5 rounded-xl font-black text-xl hover:from-orange-700 hover:to-red-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl hover:shadow-2xl hover:scale-105 transform uppercase"
           >
             {loading ? 'Saving...' : 'Continue'}
           </button>

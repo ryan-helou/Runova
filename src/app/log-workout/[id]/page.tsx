@@ -4,9 +4,12 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { format, parseISO } from 'date-fns'
+import { formatDistance, type DistanceUnit } from '@/lib/distance'
+import { useToast } from '@/contexts/ToastContext'
 
 interface Workout {
   id: string
+  training_plan_id: string
   date: string
   workout_type: string
   planned_distance: number | null
@@ -22,11 +25,14 @@ export default function LogWorkoutPage() {
   const params = useParams()
   const router = useRouter()
   const supabase = createClient()
+  const { showToast } = useToast()
   const workoutId = params.id as string
 
   const [workout, setWorkout] = useState<Workout | null>(null)
+  const [distanceUnit, setDistanceUnit] = useState<DistanceUnit>('km')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [showSkipConfirm, setShowSkipConfirm] = useState(false)
   const [formData, setFormData] = useState({
     actualDistance: '',
     actualDuration: '',
@@ -54,6 +60,17 @@ export default function LogWorkoutPage() {
           effortLevel: data.effort_level || '',
           notes: data.notes || '',
         })
+
+        // Load the training plan to get distance unit
+        const { data: planData } = await supabase
+          .from('training_plans')
+          .select('distance_unit')
+          .eq('id', data.training_plan_id)
+          .single()
+
+        if (planData) {
+          setDistanceUnit(planData.distance_unit || 'km')
+        }
       }
     } catch (error) {
       console.error('Error loading workout:', error)
@@ -80,16 +97,19 @@ export default function LogWorkoutPage() {
 
       if (error) throw error
 
+      showToast('success', 'Workout logged successfully!')
       router.push('/dashboard')
     } catch (error: any) {
-      alert('Error saving workout: ' + error.message)
+      showToast('error', 'Error saving workout: ' + error.message)
       setSaving(false)
     }
   }
 
-  const handleSkip = async () => {
-    if (!confirm('Are you sure you want to skip this workout?')) return
+  const handleSkip = () => {
+    setShowSkipConfirm(true)
+  }
 
+  const confirmSkip = async () => {
     setSaving(true)
     try {
       const { error } = await supabase
@@ -102,9 +122,10 @@ export default function LogWorkoutPage() {
 
       if (error) throw error
 
+      showToast('info', 'Workout skipped')
       router.push('/dashboard')
     } catch (error: any) {
-      alert('Error skipping workout: ' + error.message)
+      showToast('error', 'Error skipping workout: ' + error.message)
       setSaving(false)
     }
   }
@@ -164,7 +185,7 @@ export default function LogWorkoutPage() {
                 <div>
                   <div className="text-sm text-gray-600">Planned Distance</div>
                   <div className="text-lg font-semibold text-gray-900">
-                    {workout.planned_distance} miles
+                    {formatDistance(workout.planned_distance, distanceUnit)}
                   </div>
                 </div>
               )}
@@ -186,7 +207,7 @@ export default function LogWorkoutPage() {
                   <div>
                     <div className="text-sm text-gray-600">Actual Distance</div>
                     <div className="text-2xl font-bold text-green-600">
-                      {workout.actual_distance} miles
+                      {formatDistance(workout.actual_distance, distanceUnit)}
                     </div>
                   </div>
                 )}
@@ -221,11 +242,11 @@ export default function LogWorkoutPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Actual Distance (miles)
+                    Actual Distance ({distanceUnit})
                   </label>
                   <input
                     type="number"
-                    step="0.1"
+                    step="0.5"
                     value={formData.actualDistance}
                     onChange={(e) =>
                       setFormData({ ...formData, actualDistance: e.target.value })
@@ -306,6 +327,42 @@ export default function LogWorkoutPage() {
           )}
         </div>
       </div>
+
+      {/* Skip Confirmation Modal */}
+      {showSkipConfirm && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
+          onClick={() => setShowSkipConfirm(false)}
+        >
+          <div
+            className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl transform scale-100 animate-fade-in border-2 border-gray-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-2xl font-black text-gray-900 mb-4 uppercase">
+              Skip Workout?
+            </h3>
+            <p className="text-gray-700 mb-8 font-medium">
+              Are you sure you want to skip this workout? It will be marked as completed but not count towards your training.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={confirmSkip}
+                disabled={saving}
+                className="flex-1 px-6 py-4 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl font-black hover:from-orange-700 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 transform disabled:opacity-50"
+              >
+                {saving ? 'Skipping...' : 'Yes, Skip'}
+              </button>
+              <button
+                onClick={() => setShowSkipConfirm(false)}
+                disabled={saving}
+                className="px-6 py-4 bg-gray-200 text-gray-800 rounded-xl font-bold hover:bg-gray-300 transition-all hover:scale-105 transform disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
