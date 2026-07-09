@@ -1,181 +1,19 @@
-# Runova - AI-Powered Running Coach
+# Runova
 
-Runova is a web application that generates personalized running training plans using AI. Track your progress, log workouts, and achieve your running goals with intelligent coaching.
+*A running coach that turns your race goal into a week-by-week training plan, then tracks how you actually run it.*
 
-## Features
+You tell Runova what you're training for — a 5K, 10K, half marathon, marathon, or a custom goal — how many days a week you can run, and, optionally, your race date, goal time, personal best, and any injury history. It hands that to OpenAI's `gpt-4o` with a running-coach prompt and gets back a structured plan: a progressive block of weeks that follows the 10% rule for mileage increases, mixes easy runs, long runs, tempo, intervals, and recovery/rest days, and tapers into race day.
 
-- **AI-Generated Training Plans**: Get customized training plans based on your experience, goals, and schedule
-- **User Authentication**: Secure login and signup with Supabase Auth
-- **Calendar View**: Visualize your weekly training schedule
-- **Progress Tracking**: Log completed workouts with distance, duration, and effort level
-- **Plan Adjustments**: Regenerate plans based on updated goals or progress
-- **Personalized Recommendations**: AI-powered coaching tips specific to your profile
+Plan length is fixed by the goal — 8 weeks for a 5K, 10 for a 10K, 12 for a half, 16 for a marathon, 12 for custom. If you give a race date, the plan counts backward from it so the taper lands on the right day; otherwise it starts today. The model returns JSON (weekly schedules plus an `ai_recommendations` note), and every scheduled workout is also written out as an individual log row so the calendar and the plan stay in sync.
 
-## Tech Stack
+The dashboard shows the current week as a seven-day grid with a progress bar (workouts completed vs. total). Opening a day lets you log what you actually did — distance, duration, effort level (easy through very hard), and notes — or skip it. Distances round to the nearest 0.5 to avoid the model spitting out things like 5.23. Editing a plan's details updates the metadata without regenerating the AI schedule, and deleting a plan leaves your past workout logs intact.
 
-- **Frontend**: Next.js 16, React, TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth
-- **AI**: OpenAI GPT-4
-- **Date Management**: date-fns
+## Units
 
-## Setup Instructions
+Every plan carries its own `distance_unit` (kilometers or miles), seeded from a per-user `unit_preference` on your profile. The AI is told which unit to work in, and the app formats and stores distances accordingly — so a plan built in miles stays in miles even if you later switch your default.
 
-### Prerequisites
+## Stack
 
-- Node.js 18+ installed
-- OpenAI API key
-- Supabase account
+Next.js 16 with React 19 and the app router, TypeScript, and Tailwind. Supabase handles Postgres and email auth, with three tables — `profiles`, `training_plans`, and `workout_logs` — each locked down by row-level security so you only ever see your own data. Plans are generated through a small set of API routes (`generate-plan`, `update-plan`, `delete-plan`); date math is handled by date-fns.
 
-### 1. Install Dependencies
-
-```bash
-npm install
-```
-
-### 2. Set Up Supabase
-
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Go to Project Settings > API and copy:
-   - Project URL
-   - Anon/public key
-3. In the SQL Editor, run the schema from `supabase-schema.sql`
-4. Enable Email auth in Authentication > Providers
-
-### 3. Configure Environment Variables
-
-Create a `.env.local` file in the root directory:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
-OPENAI_API_KEY=your_openai_api_key_here
-```
-
-### 4. Run the Development Server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Usage
-
-1. **Sign Up**: Create a new account
-2. **Onboarding**: Complete your runner profile
-3. **Generate Plan**: AI creates a personalized training plan
-4. **Dashboard**: View your weekly schedule
-5. **Log Workouts**: Track completed runs
-6. **Adjust**: Regenerate plans as your fitness improves
-
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── api/
-│   │   └── generate-plan/     # AI plan generation endpoint
-│   ├── dashboard/              # Main dashboard
-│   ├── login/                  # Login page
-│   ├── signup/                 # Signup page
-│   ├── onboarding/             # User profile setup
-│   ├── generate-plan/          # Plan generation loading page
-│   ├── log-workout/            # Workout logging
-│   └── settings/               # User settings & plan regeneration
-├── contexts/
-│   └── AuthContext.tsx         # Authentication state management
-├── lib/
-│   └── supabase/               # Supabase client configuration
-└── types/
-    └── database.ts             # TypeScript types for database
-
-```
-
-## Database Schema
-
-### Tables
-
-- **profiles**: User information and running goals
-- **training_plans**: AI-generated training schedules
-- **workout_logs**: Completed workout records
-
-See `supabase-schema.sql` for the complete schema.
-
-## API Routes
-
-### POST /api/generate-plan
-
-Generates a personalized training plan using OpenAI GPT-4.
-
-**Authentication**: Required
-
-**Response**:
-```json
-{
-  "success": true,
-  "plan": {
-    "id": "uuid",
-    "plan_name": "string",
-    "weekly_schedule": [...],
-    "ai_recommendations": "string"
-  }
-}
-```
-
-## Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | Yes |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key | Yes |
-| `OPENAI_API_KEY` | OpenAI API key | Yes |
-
-## Development
-
-```bash
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-
-# Lint code
-npm run lint
-```
-
-## Deployment
-
-This app can be deployed to Vercel, Netlify, or any platform that supports Next.js.
-
-### Deploy to Vercel
-
-1. Push your code to GitHub
-2. Import the repository in Vercel
-3. Add environment variables
-4. Deploy
-
-## Future Enhancements
-
-- [ ] Integration with Strava/Garmin
-- [ ] Mobile app
-- [ ] Social features (share workouts, challenges)
-- [ ] Advanced analytics and insights
-- [ ] Nutrition guidance
-- [ ] Injury prevention tips
-- [ ] Race day strategy
-
-## License
-
-MIT
-
-## Support
-
-For issues and questions, please open an issue on GitHub.
+A personal project, and a work in progress — the schema arrived in a few passes, which is why the repo carries several migration SQL files alongside the base schema.
