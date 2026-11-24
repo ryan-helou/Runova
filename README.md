@@ -4,6 +4,8 @@
 
 **A running app that creates a week-by-week training plan for your race and lets you log how each run went.**
 
+<!-- facts --><img alt="Race goals: 5K to marathon" src="https://img.shields.io/badge/Race_goals-5K_to_marathon-24292f?style=for-the-badge"> <img alt="Plans: 8 to 16 weeks" src="https://img.shields.io/badge/Plans-8_to_16_weeks-24292f?style=for-the-badge">
+
 </div>
 
 <br>
