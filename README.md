@@ -4,15 +4,13 @@
 
 **A running app that creates a week-by-week training plan for your race and lets you log how each run went.**
 
-<!-- facts --><img alt="Race goals: 5K to marathon" src="https://img.shields.io/badge/Race_goals-5K_to_marathon-24292f?style=for-the-badge"> <img alt="Plans: 8 to 16 weeks" src="https://img.shields.io/badge/Plans-8_to_16_weeks-24292f?style=for-the-badge">
+<!-- facts --><img alt="Race goals: 5K to marathon" src="https://img.shields.io/badge/Race_goals-5K_to_marathon-24292f?style=for-the-badge"> <img alt="Plans: 8 to 16 weeks" src="https://img.shields.io/badge/Plans-8_to_16_weeks-24292f?style=for-the-badge"> <img alt="Coach: AI-written plans" src="https://img.shields.io/badge/Coach-AI--written_plans-24292f?style=for-the-badge">
 
 </div>
 
 <br>
 
 You tell Runova what you are training for (a 5K, 10K, half marathon, marathon, or your own goal), how many days a week you can run, and optionally your race date, goal time, and past injuries. It then uses AI to write a training plan that slowly builds up your distance and eases off before race day. Plans run from 8 weeks for a 5K to 16 weeks for a marathon.
-
-It is a personal project and still a work in progress.
 
 ## What you can do with it
 
